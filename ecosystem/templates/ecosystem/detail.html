@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ ecosystem.name }} - Virtual Zoo{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto">
+    <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+        <div class="h-96 bg-gradient-to-br from-green-400 to-blue-500 flex items-center justify-center relative">
+            {% if ecosystem.image %}
+                <img src="{{ ecosystem.image.url }}" alt="{{ ecosystem.name }}" class="w-full h-full object-cover">
+            {% else %}
+                <span class="text-9xl">🌍</span>
+            {% endif %}
+        </div>
+        <div class="p-8">
+            <div class="flex justify-between items-start mb-6">
+                <div>
+                    <div class="flex items-center gap-3 mb-2">
+                        <h1 class="text-4xl font-bold">{{ ecosystem.name }}</h1>
+                        <span class="bg-green-100 text-green-800 px-3 py-1 rounded">{{ ecosystem.get_region_display }}</span>
+                        <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded">{{ ecosystem.get_era_display }}</span>
+                    </div>
+                    <div class="text-gray-600 space-y-1">
+                        <p><span class="font-semibold">Location:</span> {{ ecosystem.location }}</p>
+                        <p><span class="font-semibold">Climate:</span> {{ ecosystem.climate }}</p>
+                        {% if ecosystem.temperature_min and ecosystem.temperature_max %}
+                            <p><span class="font-semibold">Temperature Range:</span> {{ ecosystem.temperature_min }}°C - {{ ecosystem.temperature_max }}°C</p>
+                        {% endif %}
+                        {% if ecosystem.precipitation %}
+                            <p><span class="font-semibold">Precipitation:</span> {{ ecosystem.precipitation }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+                {% if user.is_authenticated and user.is_admin_user or user.is_authenticated and user == ecosystem.created_by %}
+                    <div class="space-x-2">
+                        <a href="{% url 'ecosystem:update' ecosystem.pk %}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Edit</a>
+                        <a href="{% url 'ecosystem:delete' ecosystem.pk %}" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">Delete</a>
+                    </div>
+                {% endif %}
+            </div>
+            <div class="prose max-w-none mb-8">
+                <h2 class="text-2xl font-bold mb-4">Description</h2>
+                <p class="text-gray-700 text-lg leading-relaxed mb-6">{{ ecosystem.description }}</p>
+                
+                {% if ecosystem.vegetation %}
+                <div class="bg-green-50 rounded-lg p-6 mb-6">
+                    <h3 class="text-xl font-bold mb-3 text-green-800">Vegetation</h3>
+                    <p class="text-gray-700">{{ ecosystem.vegetation }}</p>
+                </div>
+                {% endif %}
+            </div>
+            
+            <!-- Species Overview -->
+            <div class="border-t pt-8">
+                <div class="flex justify-between items-center mb-6">
+                    <div class="flex items-center gap-4">
+                        <h2 class="text-2xl font-bold">Animals in this Ecosystem</h2>
+                        <div class="flex gap-2">
+                            <a href="?species_type=existing" class="px-3 py-1 rounded text-sm {% if not species_type_filter or species_type_filter == 'existing' %}bg-green-600 text-white{% else %}bg-gray-200 text-gray-700{% endif %}">Existing ({{ existing_species.count }})</a>
+                            <a href="?species_type=extinct" class="px-3 py-1 rounded text-sm {% if species_type_filter == 'extinct' %}bg-red-600 text-white{% else %}bg-gray-200 text-gray-700{% endif %}">Extinct ({{ extinct_species.count }})</a>
+                            <a href="?" class="px-3 py-1 rounded text-sm {% if not species_type_filter %}bg-blue-600 text-white{% else %}bg-gray-200 text-gray-700{% endif %}">All ({{ animals.count }})</a>
+                        </div>
+                    </div>
+                    {% if user.is_authenticated and user.is_admin_user or user.is_authenticated and user.is_teacher_user %}
+                        <a href="{% url 'ecosystem:animal_create' ecosystem.pk %}" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Add Animal</a>
+                    {% endif %}
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {% for animal in animals %}
+                    <div class="bg-gray-50 rounded-lg p-4 hover:shadow-md transition">
+                        <div class="h-48 bg-gradient-to-br from-yellow-400 to-orange-500 rounded mb-4 flex items-center justify-center">
+                            {% if animal.image %}
+                                <img src="{{ animal.image.url }}" alt="{{ animal.name }}" class="w-full h-full object-cover rounded">
+                            {% else %}
+                                <span class="text-6xl">🦁</span>
+                            {% endif %}
+                        </div>
+                        <h3 class="text-xl font-bold mb-1">{{ animal.name }}</h3>
+                        <p class="text-sm text-gray-600 italic mb-2">{{ animal.scientific_name }}</p>
+                        <span class="inline-block mb-2 px-2 py-1 rounded text-xs {% if animal.species_type == 'existing' %}bg-green-100 text-green-800{% else %}bg-red-100 text-red-800{% endif %}">
+                            {{ animal.get_species_type_display }}
+                        </span>
+                        <p class="text-gray-700 text-sm mb-2">{{ animal.description|truncatewords:15 }}</p>
+                        <div class="text-sm text-gray-600 space-y-1">
+                            <p><span class="font-semibold">Habitat:</span> {{ animal.habitat }}</p>
+                            <p><span class="font-semibold">Diet:</span> {{ animal.diet }}</p>
+                            {% if animal.conservation_status %}
+                                <p><span class="font-semibold">Status:</span> {{ animal.conservation_status }}</p>
+                            {% endif %}
+                        </div>
+                        {% if user.is_authenticated and user.is_admin_user or user.is_authenticated and user.is_teacher_user %}
+                            <div class="mt-2 space-x-2">
+                                <a href="{% url 'ecosystem:animal_update' animal.pk %}" class="text-blue-600 hover:text-blue-800 text-sm">Edit</a>
+                                <a href="{% url 'ecosystem:animal_delete' animal.pk %}" class="text-red-600 hover:text-red-800 text-sm">Delete</a>
+                            </div>
+                        {% endif %}
+                    </div>
+                    {% empty %}
+                    <div class="col-span-3 text-center py-8 text-gray-500">
+                        <p>No animals in this ecosystem yet.</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

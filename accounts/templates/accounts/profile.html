@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %}Profile - Virtual Zoo{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-8">
+    <h2 class="text-3xl font-bold mb-6">My Profile</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+            <h3 class="text-xl font-semibold mb-4">Personal Information</h3>
+            <div class="space-y-3">
+                <p><span class="font-semibold">Username:</span> {{ user.username }}</p>
+                <p><span class="font-semibold">Email:</span> {{ user.email }}</p>
+                <p><span class="font-semibold">Name:</span> {{ user.get_full_name|default:"Not provided" }}</p>
+                <p><span class="font-semibold">Role:</span> {{ user.get_role_display }}</p>
+                {% if user.phone_number %}
+                    <p><span class="font-semibold">Phone:</span> {{ user.phone_number }}</p>
+                {% endif %}
+                {% if user.bio %}
+                    <p><span class="font-semibold">Bio:</span> {{ user.bio }}</p>
+                {% endif %}
+            </div>
+        </div>
+        <div>
+            <h3 class="text-xl font-semibold mb-4">Activity</h3>
+            {% if user.is_teacher_user %}
+                <p class="mb-2">Sessions Created: {{ user.taught_sessions.count }}</p>
+            {% endif %}
+            {% if user.is_student_user %}
+                <p class="mb-2">Sessions Enrolled: {{ user.enrollments.count }}</p>
+            {% endif %}
+            {% if user.is_admin_user or user.is_teacher_user %}
+                <p class="mb-2">Ecosystems Created: {{ user.created_ecosystems.count }}</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+

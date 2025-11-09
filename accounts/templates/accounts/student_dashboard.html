@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+
+{% block title %}Student Dashboard - Virtual Zoo{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <h1 class="text-4xl font-bold mb-6">Student Dashboard</h1>
+    
+    <!-- Statistics Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+            <div class="text-4xl font-bold text-green-600">{{ total_ecosystems_visited }}</div>
+            <div class="text-gray-600 mt-2">Ecosystems Visited</div>
+        </div>
+        <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+            <div class="text-4xl font-bold text-purple-600">{{ total_sessions_watched }}</div>
+            <div class="text-gray-600 mt-2">Sessions Watched</div>
+        </div>
+        <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+            <div class="text-4xl font-bold text-blue-600">{{ total_enrollments }}</div>
+            <div class="text-gray-600 mt-2">Sessions Enrolled</div>
+        </div>
+        <div class="bg-white rounded-lg shadow-lg p-6 text-center">
+            <div class="text-4xl font-bold text-orange-600">{{ total_time_spent }}</div>
+            <div class="text-gray-600 mt-2">Minutes Learning</div>
+        </div>
+    </div>
+
+    <!-- Ecosystems Visited -->
+    <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+        <h2 class="text-2xl font-bold mb-4">Ecosystems Visited</h2>
+        {% if progress_ecosystems %}
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {% for progress in progress_ecosystems %}
+                <div class="border rounded-lg p-4">
+                    <h3 class="font-semibold text-lg mb-2">
+                        <a href="{% url 'ecosystem:detail' progress.ecosystem.pk %}" class="text-green-600 hover:text-green-800">
+                            {{ progress.ecosystem.name }}
+                        </a>
+                    </h3>
+                    <p class="text-sm text-gray-600">Time spent: {{ progress.time_spent_minutes }} minutes</p>
+                    <p class="text-sm text-gray-600">Visited: {{ progress.visited_at|date:"M d, Y" }}</p>
+                    <p class="text-sm">
+                        Status: 
+                        {% if progress.completed %}
+                            <span class="text-green-600 font-semibold">Completed</span>
+                        {% else %}
+                            <span class="text-yellow-600">In Progress</span>
+                        {% endif %}
+                    </p>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-gray-500">You haven't visited any ecosystems yet. <a href="{% url 'ecosystem:list' %}" class="text-green-600 hover:text-green-800">Start exploring!</a></p>
+        {% endif %}
+    </div>
+
+    <!-- Sessions Watched -->
+    <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+        <h2 class="text-2xl font-bold mb-4">Sessions Watched</h2>
+        {% if progress_sessions %}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {% for progress in progress_sessions %}
+                <div class="border rounded-lg p-4">
+                    <h3 class="font-semibold text-lg mb-2">
+                        <a href="{% url 'educational_sessions:detail' progress.session.pk %}" class="text-purple-600 hover:text-purple-800">
+                            {{ progress.session.title }}
+                        </a>
+                    </h3>
+                    <p class="text-sm text-gray-600">Time spent: {{ progress.time_spent_minutes }} minutes</p>
+                    <p class="text-sm text-gray-600">Watched: {{ progress.visited_at|date:"M d, Y" }}</p>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-gray-500">You haven't watched any sessions yet. <a href="{% url 'educational_sessions:list' %}" class="text-purple-600 hover:text-purple-800">Browse sessions!</a></p>
+        {% endif %}
+    </div>
+
+    <!-- Enrollments -->
+    <div class="bg-white rounded-lg shadow-lg p-6">
+        <h2 class="text-2xl font-bold mb-4">My Enrollments</h2>
+        {% if enrollments %}
+            <div class="space-y-4">
+                {% for enrollment in enrollments %}
+                <div class="border rounded-lg p-4 flex justify-between items-center">
+                    <div>
+                        <h3 class="font-semibold text-lg">
+                            <a href="{% url 'educational_sessions:detail' enrollment.session.pk %}" class="text-purple-600 hover:text-purple-800">
+                                {{ enrollment.session.title }}
+                            </a>
+                        </h3>
+                        <p class="text-sm text-gray-600">Enrolled: {{ enrollment.enrolled_at|date:"M d, Y" }}</p>
+                        <p class="text-sm text-gray-600">Scheduled: {{ enrollment.session.scheduled_date|date:"M d, Y H:i" }}</p>
+                    </div>
+                    <div class="text-right">
+                        {% if enrollment.attended %}
+                            <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">Attended</span>
+                        {% else %}
+                            <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm">Pending</span>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-gray-500">You're not enrolled in any sessions yet. <a href="{% url 'educational_sessions:list' %}" class="text-purple-600 hover:text-purple-800">Browse and enroll!</a></p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+

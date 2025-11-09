@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ action }} Session - Virtual Zoo{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto bg-white rounded-lg shadow-lg p-8">
+    <h2 class="text-3xl font-bold mb-6">{{ action }} Educational Session</h2>
+    <form method="post" enctype="multipart/form-data" class="space-y-4">
+        {% csrf_token %}
+        <div>
+            <label for="{{ form.title.id_for_label }}" class="block text-gray-700 font-semibold mb-2">Title</label>
+            {{ form.title }}
+        </div>
+        <div>
+            <label for="{{ form.description.id_for_label }}" class="block text-gray-700 font-semibold mb-2">Description</label>
+            {{ form.description }}
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <label for="{{ form.session_type.id_for_label }}" class="block text-gray-700 font-semibold mb-2">Session Type</label>
+                {{ form.session_type }}
+            </div>
+            <div>
+                <label for="{{ form.teacher.id_for_label }}" class="block text-gray-700 font-semibold mb-2">Teacher</label>
+                {{ form.teacher }}
+            </div>
+        </div>
+        <div>
+            <label for="{{ form.ecosystem.id_for_label }}" class="block text-gray-700 font-semibold mb-2">Ecosystem (Optional)</label>
+            {{ form.ecosystem }}
+        </div>
+        <div>
+            <label for="{{ form.scheduled_date.id_for_label }}" class="block text-gray-700 font-semibold mb-2">Scheduled Date & Time</label>
+            {{ form.scheduled_date }}
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <label for="{{ form.duration_minutes.id_for_label }}" class="block text-gray-700 font-semibold mb-2">Duration (minutes)</label>
+                {{ form.duration_minutes }}
+            </div>
+            <div>
+                <label for="{{ form.max_students.id_for_label }}" class="block text-gray-700 font-semibold mb-2">Max Students</label>
+                {{ form.max_students }}
+            </div>
+        </div>
+        <div>
+            <label for="{{ form.image.id_for_label }}" class="block text-gray-700 font-semibold mb-2">Image</label>
+            {{ form.image }}
+        </div>
+        <div class="flex space-x-4">
+            <button type="submit" class="bg-purple-600 text-white px-6 py-2 rounded hover:bg-purple-700 font-semibold">Save</button>
+            <a href="{% if session %}{% url 'educational_sessions:detail' session.pk %}{% else %}{% url 'educational_sessions:list' %}{% endif %}" class="bg-gray-300 text-gray-700 px-6 py-2 rounded hover:bg-gray-400 font-semibold">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
+

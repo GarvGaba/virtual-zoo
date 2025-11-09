@@ -1,0 +1,284 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - Virtual Zoo{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <!-- Modern Hero Section -->
+    <div class="relative bg-gradient-to-br from-emerald-700 via-teal-800 to-cyan-900 text-white rounded-3xl p-8 md:p-16 mb-16 text-center overflow-hidden shadow-2xl" style="background: linear-gradient(135deg, #059669 0%, #0f766e 50%, #164e63 100%);">
+        <!-- Solid background overlay for better text contrast -->
+        <div class="absolute inset-0 bg-emerald-800 opacity-90 z-0"></div>
+        <!-- Animated background pattern -->
+        <div class="absolute inset-0 opacity-10 z-0">
+            <div class="absolute top-0 left-0 w-full h-full bg-[url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.1"%3E%3Cpath d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')]"></div>
+        </div>
+        
+        <!-- Floating animal icons - positioned to not overlap -->
+        <div class="absolute inset-0 overflow-hidden pointer-events-none z-0">
+            <div class="absolute top-8 left-8 text-7xl md:text-9xl opacity-20 animate-float">🦁</div>
+            <div class="absolute top-16 right-12 text-6xl md:text-8xl opacity-20 animate-float-delay">🐘</div>
+            <div class="absolute bottom-12 left-1/4 text-5xl md:text-7xl opacity-20 animate-float-delay-2">🦒</div>
+            <div class="absolute bottom-16 right-1/4 text-4xl md:text-6xl opacity-20 animate-float">🐧</div>
+        </div>
+        
+        <div class="relative z-20 w-full max-w-5xl mx-auto">
+            <!-- Logo/Brand Section -->
+            <div class="mb-8 animate-fade-in">
+                <div class="inline-flex items-center justify-center w-24 h-24 md:w-32 md:h-32 bg-white bg-opacity-20 rounded-full backdrop-blur-md border-4 border-white border-opacity-30 mb-6 shadow-2xl">
+                    <span class="text-5xl md:text-7xl">🦁</span>
+                </div>
+            </div>
+            
+            <!-- Main Heading -->
+            <h1 class="text-4xl md:text-6xl lg:text-7xl font-extrabold mb-4 md:mb-6 animate-fade-in-delay tracking-tight" style="color: #ffffff; text-shadow: 2px 2px 4px rgba(0,0,0,0.5), 0 0 10px rgba(0,0,0,0.3);">
+                Welcome to <span style="color: #fef08a; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">Virtual Zoo</span>
+            </h1>
+            <p class="text-xl md:text-2xl lg:text-3xl mb-3 md:mb-4 font-bold animate-fade-in-delay-2" style="color: #ffffff; text-shadow: 1px 1px 3px rgba(0,0,0,0.5);">
+                Immersive 3D Ecosystem Exploration
+            </p>
+            <p class="text-base md:text-lg lg:text-xl mb-8 md:mb-12 max-w-3xl mx-auto px-4 animate-fade-in-delay-3 leading-relaxed" style="color: #f0fdfa; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">
+                Discover ecosystems, learn about animals, and join educational sessions in immersive 3D experiences
+            </p>
+            
+            <!-- 3D Preview Card -->
+            <div class="mb-8 md:mb-12 max-w-2xl mx-auto px-4 animate-fade-in-delay-4">
+                <div class="bg-transparent backdrop-blur-lg rounded-2xl p-6 md:p-10 border-2 border-white border-opacity-30 shadow-2xl hover:border-opacity-50 transition-all duration-300">
+                    <div class="relative mb-6">
+                        <div class="absolute inset-0 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full blur-2xl opacity-30 animate-pulse"></div>
+                        <div class="relative text-7xl md:text-9xl animate-bounce-slow">🌍</div>
+                    </div>
+                    <p class="text-lg md:text-xl mb-3 font-bold" style="color: #ffffff; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">Experience ecosystems in immersive 3D</p>
+                    <p class="text-sm md:text-base" style="color: #f0fdfa; text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">Interactive 3D previews available for each ecosystem</p>
+                </div>
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="flex flex-col sm:flex-row justify-center gap-4 md:gap-6 animate-fade-in-delay-5">
+                <a href="{% url 'ecosystem:list' %}" class="group bg-purple-600 text-white px-8 py-4 rounded-xl font-bold hover:bg-purple-700 transform hover:scale-105 hover:shadow-2xl transition-all duration-300 text-lg shadow-xl flex items-center justify-center gap-2 border-2 border-purple-500">
+                    <span class="text-2xl">🌍</span>
+                    <span class="font-extrabold">Explore Ecosystems</span>
+                    <span class="group-hover:translate-x-1 transition-transform font-bold">→</span>
+                </a>
+                <a href="{% url 'educational_sessions:list' %}" class="group bg-purple-600 text-white px-8 py-4 rounded-xl font-bold hover:bg-purple-700 transform hover:scale-105 hover:shadow-2xl transition-all duration-300 text-lg shadow-xl flex items-center justify-center gap-2 border-2 border-purple-500">
+                    <span class="text-2xl">📚</span>
+                    <span class="font-extrabold">View Sessions</span>
+                    <span class="group-hover:translate-x-1 transition-transform font-bold">→</span>
+                </a>
+                {% if user.is_authenticated %}
+                    {% if user.is_student_user %}
+                        <a href="{% url 'accounts:student_dashboard' %}" class="group bg-purple-600 text-white px-8 py-4 rounded-xl font-bold hover:bg-purple-700 transform hover:scale-105 hover:shadow-2xl transition-all duration-300 text-lg shadow-xl flex items-center justify-center gap-2 border-2 border-purple-500">
+                            <span class="text-2xl">📊</span>
+                            <span>My Dashboard</span>
+                            <span class="group-hover:translate-x-1 transition-transform">→</span>
+                        </a>
+                    {% elif user.is_teacher_user %}
+                        <a href="{% url 'accounts:teacher_dashboard' %}" class="group bg-purple-600 text-white px-8 py-4 rounded-xl font-bold hover:bg-purple-700 transform hover:scale-105 hover:shadow-2xl transition-all duration-300 text-lg shadow-xl flex items-center justify-center gap-2 border-2 border-purple-500">
+                            <span class="text-2xl">👨‍🏫</span>
+                            <span>Teacher Panel</span>
+                            <span class="group-hover:translate-x-1 transition-transform">→</span>
+                        </a>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Stats -->
+    {% if user.is_authenticated and user.is_student_user %}
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+        <div class="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl shadow-xl p-8 text-center border-2 border-emerald-100 hover:shadow-2xl transition-all transform hover:scale-105">
+            <div class="text-5xl font-extrabold text-emerald-600 mb-2">{{ user.progress.count }}</div>
+            <div class="text-gray-700 font-semibold">Ecosystems Visited</div>
+            <div class="text-3xl mt-3">🌍</div>
+        </div>
+        <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl shadow-xl p-8 text-center border-2 border-purple-100 hover:shadow-2xl transition-all transform hover:scale-105">
+            <div class="text-5xl font-extrabold text-purple-600 mb-2">{{ user.enrollments.count }}</div>
+            <div class="text-gray-700 font-semibold">Sessions Enrolled</div>
+            <div class="text-3xl mt-3">📚</div>
+        </div>
+        <div class="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-2xl shadow-xl p-8 text-center border-2 border-blue-100 hover:shadow-2xl transition-all transform hover:scale-105">
+            <div class="text-5xl font-extrabold text-blue-600 mb-2">{{ user.progress.aggregate.total_time|default:0 }}</div>
+            <div class="text-gray-700 font-semibold">Minutes Learning</div>
+            <div class="text-3xl mt-3">⏱️</div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Featured Ecosystems -->
+    <section class="mb-16">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+            <div>
+                <h2 class="text-4xl md:text-5xl font-extrabold text-gray-800 mb-2">Featured Ecosystems</h2>
+                <p class="text-gray-600">Explore diverse habitats from around the world</p>
+            </div>
+            <a href="{% url 'ecosystem:list' %}" class="text-emerald-600 hover:text-emerald-700 font-bold text-lg flex items-center gap-2 group">
+                <span>View All</span>
+                <span class="group-hover:translate-x-1 transition-transform">→</span>
+            </a>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {% for ecosystem in featured_ecosystems %}
+            <div class="bg-white rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:scale-[1.02] border border-gray-100 group">
+                <div class="h-56 bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center relative overflow-hidden">
+                    {% if ecosystem.image %}
+                        <img src="{{ ecosystem.image.url }}" alt="{{ ecosystem.name }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                    {% else %}
+                        <span class="text-9xl opacity-50">🌍</span>
+                    {% endif %}
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                    <div class="absolute bottom-4 left-4 right-4">
+                        <span class="bg-white/90 backdrop-blur-sm text-emerald-700 px-3 py-1 rounded-full text-xs font-bold">{{ ecosystem.get_region_display }}</span>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-2 group-hover:text-emerald-600 transition-colors">{{ ecosystem.name }}</h3>
+                    <p class="text-gray-500 mb-3 text-sm font-medium">{{ ecosystem.get_era_display }} Era</p>
+                    <p class="text-gray-700 mb-6 leading-relaxed line-clamp-3">{{ ecosystem.description|truncatewords:20 }}</p>
+                    <a href="{% url 'ecosystem:detail' ecosystem.pk %}" class="inline-flex items-center gap-2 text-emerald-600 hover:text-emerald-700 font-bold group/link">
+                        <span>Explore</span>
+                        <span class="group-hover/link:translate-x-1 transition-transform">→</span>
+                    </a>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-span-3 text-center py-12">
+                <p class="text-gray-500 text-xl">No ecosystems available yet.</p>
+                {% if user.is_authenticated and user.is_admin_user or user.is_teacher_user %}
+                    <a href="{% url 'ecosystem:create' %}" class="mt-4 inline-block bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700">Create First Ecosystem</a>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- Upcoming Sessions -->
+    <section>
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+            <div>
+                <h2 class="text-4xl md:text-5xl font-extrabold text-gray-800 mb-2">Upcoming Educational Sessions</h2>
+                <p class="text-gray-600">Join interactive learning experiences</p>
+            </div>
+            <a href="{% url 'educational_sessions:list' %}" class="text-purple-700 hover:text-purple-800 font-bold text-lg flex items-center gap-2 group">
+                <span class="font-extrabold">View All</span>
+                <span class="group-hover:translate-x-1 transition-transform font-bold">→</span>
+            </a>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {% for session in upcoming_sessions %}
+            <div class="bg-white rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:scale-[1.02] border border-gray-100 group">
+                <div class="h-56 bg-gradient-to-br from-purple-400 to-pink-500 flex items-center justify-center relative overflow-hidden">
+                    {% if session.image %}
+                        <img src="{{ session.image.url }}" alt="{{ session.title }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                    {% else %}
+                        <span class="text-9xl opacity-50">📚</span>
+                    {% endif %}
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                    {% if session.video_url %}
+                        <div class="absolute top-4 right-4 bg-black/80 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm flex items-center gap-2 shadow-lg">
+                            <span class="text-lg">▶️</span>
+                            <span class="font-semibold">Video</span>
+                        </div>
+                    {% endif %}
+                    <div class="absolute bottom-4 left-4 right-4 flex items-center justify-between">
+                        <span class="bg-white/90 backdrop-blur-sm text-purple-700 px-3 py-1 rounded-full text-xs font-bold">{{ session.get_session_type_display }}</span>
+                        <span class="bg-white/90 backdrop-blur-sm text-gray-700 px-3 py-1 rounded-full text-xs font-semibold">{{ session.enrollments.count }}/{{ session.max_students }}</span>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-3 group-hover:text-purple-600 transition-colors line-clamp-2">{{ session.title }}</h3>
+                    <p class="text-gray-700 mb-4 leading-relaxed line-clamp-3">{{ session.description|truncatewords:15 }}</p>
+                    <div class="flex items-center gap-2 text-sm text-gray-500 mb-6">
+                        <span class="font-semibold">👨‍🏫</span>
+                        <span>{{ session.teacher.get_full_name|default:session.teacher.username }}</span>
+                        <span>•</span>
+                        <span>{{ session.scheduled_date|date:"M d, Y" }}</span>
+                    </div>
+                    <a href="{% url 'educational_sessions:detail' session.pk %}" class="inline-flex items-center gap-2 text-purple-600 hover:text-purple-700 font-bold group/link">
+                        <span>View Details</span>
+                        <span class="group-hover/link:translate-x-1 transition-transform">→</span>
+                    </a>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-span-3 text-center py-12">
+                <p class="text-gray-500 text-xl">No upcoming sessions.</p>
+                {% if user.is_authenticated and user.is_admin_user or user.is_teacher_user %}
+                    <a href="{% url 'educational_sessions:create' %}" class="mt-4 inline-block bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700">Create First Session</a>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+</div>
+
+<style>
+    @keyframes fade-in {
+        from { opacity: 0; transform: translateY(-20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes float {
+        0%, 100% { transform: translateY(0px) rotate(0deg); }
+        50% { transform: translateY(-20px) rotate(5deg); }
+    }
+    
+    @keyframes bounce-slow {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+    
+    .animate-fade-in {
+        animation: fade-in 0.8s ease-out;
+    }
+    
+    .animate-fade-in-delay {
+        animation: fade-in 0.8s ease-out 0.2s both;
+    }
+    
+    .animate-fade-in-delay-2 {
+        animation: fade-in 0.8s ease-out 0.4s both;
+    }
+    
+    .animate-fade-in-delay-3 {
+        animation: fade-in 0.8s ease-out 0.6s both;
+    }
+    
+    .animate-fade-in-delay-4 {
+        animation: fade-in 0.8s ease-out 0.8s both;
+    }
+    
+    .animate-fade-in-delay-5 {
+        animation: fade-in 0.8s ease-out 1s both;
+    }
+    
+    .animate-float {
+        animation: float 6s ease-in-out infinite;
+    }
+    
+    .animate-float-delay {
+        animation: float 6s ease-in-out infinite 1.5s;
+    }
+    
+    .animate-float-delay-2 {
+        animation: float 6s ease-in-out infinite 3s;
+    }
+    
+    .animate-bounce-slow {
+        animation: bounce-slow 3s ease-in-out infinite;
+    }
+    
+    .line-clamp-2 {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    
+    .line-clamp-3 {
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+</style>
+{% endblock %}

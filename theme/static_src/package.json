@@ -1,0 +1,10 @@
+{
+  "scripts": {
+    "build": "tailwindcss --input=css/input.css --output=../static/css/dist/styles.css --minify",
+    "watch": "tailwindcss --input=css/input.css --output=../static/css/dist/styles.css --watch"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.0"
+  }
+}
+

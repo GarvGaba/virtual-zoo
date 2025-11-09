@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+
+{% block title %}Ecosystems - Virtual Zoo{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+        <h1 class="text-4xl font-bold">Ecosystem Explorer</h1>
+        {% if user.is_authenticated and user.is_admin_user or user.is_authenticated and user.is_teacher_user %}
+            <a href="{% url 'ecosystem:create' %}" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700">Create Ecosystem</a>
+        {% endif %}
+    </div>
+
+    <!-- Filters and Search -->
+    <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+        <form method="get" class="space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <!-- Search -->
+                <div class="md:col-span-2">
+                    <label for="search" class="block text-sm font-semibold mb-2">Search</label>
+                    <input type="text" name="search" id="search" value="{{ search_query }}" placeholder="Search ecosystems..." class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                </div>
+                
+                <!-- Region Filter -->
+                <div>
+                    <label for="region" class="block text-sm font-semibold mb-2">Region</label>
+                    <select name="region" id="region" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                        <option value="">All Regions</option>
+                        <option value="amazon" {% if region_filter == 'amazon' %}selected{% endif %}>Amazon Rainforest</option>
+                        <option value="sahara" {% if region_filter == 'sahara' %}selected{% endif %}>Sahara Desert</option>
+                        <option value="arctic" {% if region_filter == 'arctic' %}selected{% endif %}>Arctic Tundra</option>
+                        <option value="coral" {% if region_filter == 'coral' %}selected{% endif %}>Coral Reef</option>
+                        <option value="savanna" {% if region_filter == 'savanna' %}selected{% endif %}>African Savanna</option>
+                        <option value="taiga" {% if region_filter == 'taiga' %}selected{% endif %}>Boreal Forest (Taiga)</option>
+                        <option value="temperate" {% if region_filter == 'temperate' %}selected{% endif %}>Temperate Forest</option>
+                        <option value="ocean" {% if region_filter == 'ocean' %}selected{% endif %}>Deep Ocean</option>
+                        <option value="mountain" {% if region_filter == 'mountain' %}selected{% endif %}>Mountain Range</option>
+                        <option value="wetland" {% if region_filter == 'wetland' %}selected{% endif %}>Wetland</option>
+                    </select>
+                </div>
+                
+                <!-- Era Filter -->
+                <div>
+                    <label for="era" class="block text-sm font-semibold mb-2">Era</label>
+                    <select name="era" id="era" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                        <option value="">All Eras</option>
+                        <option value="jurassic" {% if era_filter == 'jurassic' %}selected{% endif %}>Jurassic</option>
+                        <option value="cretaceous" {% if era_filter == 'cretaceous' %}selected{% endif %}>Cretaceous</option>
+                        <option value="paleogene" {% if era_filter == 'paleogene' %}selected{% endif %}>Paleogene</option>
+                        <option value="neogene" {% if era_filter == 'neogene' %}selected{% endif %}>Neogene</option>
+                        <option value="quaternary" {% if era_filter == 'quaternary' %}selected{% endif %}>Quaternary</option>
+                        <option value="present" {% if era_filter == 'present' %}selected{% endif %}>Present Day</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Species Type Filter -->
+            <div>
+                <label class="block text-sm font-semibold mb-2">Species Type</label>
+                <div class="flex gap-4">
+                    <label class="flex items-center">
+                        <input type="radio" name="species" value="" {% if not species_filter %}checked{% endif %} class="mr-2">
+                        <span>All Species</span>
+                    </label>
+                    <label class="flex items-center">
+                        <input type="radio" name="species" value="existing" {% if species_filter == 'existing' %}checked{% endif %} class="mr-2">
+                        <span>Existing Only</span>
+                    </label>
+                    <label class="flex items-center">
+                        <input type="radio" name="species" value="extinct" {% if species_filter == 'extinct' %}checked{% endif %} class="mr-2">
+                        <span>Extinct Only</span>
+                    </label>
+                </div>
+            </div>
+            
+            <div class="flex gap-2">
+                <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700">Apply Filters</button>
+                <a href="{% url 'ecosystem:list' %}" class="bg-gray-300 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-400">Clear</a>
+            </div>
+        </form>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for ecosystem in page_obj %}
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition transform hover:scale-105">
+            <div class="h-64 bg-gradient-to-br from-green-400 to-blue-500 flex items-center justify-center relative overflow-hidden">
+                {% if ecosystem.image %}
+                    <img src="{{ ecosystem.image.url }}" alt="{{ ecosystem.name }}" class="w-full h-full object-cover">
+                {% else %}
+                    <!-- Fallback: Use placeholder service or gradient -->
+                    <div class="w-full h-full bg-gradient-to-br from-green-500 to-blue-600 flex items-center justify-center">
+                        <span class="text-8xl">🌍</span>
+                    </div>
+                {% endif %}
+                <div class="absolute top-2 left-2 flex gap-2">
+                    <span class="bg-green-600 text-white px-2 py-1 rounded text-xs">{{ ecosystem.get_region_display }}</span>
+                    <span class="bg-blue-600 text-white px-2 py-1 rounded text-xs">{{ ecosystem.get_era_display }}</span>
+                </div>
+            </div>
+            <div class="p-6">
+                <h3 class="text-2xl font-bold mb-2">{{ ecosystem.name }}</h3>
+                <p class="text-gray-600 mb-2"><span class="font-semibold">Location:</span> {{ ecosystem.location }}</p>
+                <p class="text-gray-600 mb-2"><span class="font-semibold">Climate:</span> {{ ecosystem.climate }}</p>
+                {% if ecosystem.temperature_min and ecosystem.temperature_max %}
+                    <p class="text-gray-600 mb-2"><span class="font-semibold">Temperature:</span> {{ ecosystem.temperature_min }}°C - {{ ecosystem.temperature_max }}°C</p>
+                {% endif %}
+                <p class="text-gray-700 mb-4">{{ ecosystem.description|truncatewords:25 }}</p>
+                <div class="flex justify-between items-center">
+                    <a href="{% url 'ecosystem:detail' ecosystem.pk %}" class="text-green-600 hover:text-green-800 font-semibold">Explore →</a>
+                    {% if user.is_authenticated and user.is_admin_user or user.is_authenticated and user == ecosystem.created_by %}
+                        <div class="space-x-2">
+                            <a href="{% url 'ecosystem:update' ecosystem.pk %}" class="text-blue-600 hover:text-blue-800 text-sm">Edit</a>
+                            <a href="{% url 'ecosystem:delete' ecosystem.pk %}" class="text-red-600 hover:text-red-800 text-sm">Delete</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-span-3 text-center py-12">
+            <p class="text-gray-500 text-xl mb-4">No ecosystems found matching your criteria.</p>
+            <a href="{% url 'ecosystem:list' %}" class="text-green-600 hover:text-green-800">Clear filters</a>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if page_obj.has_other_pages %}
+    <div class="mt-8 flex justify-center">
+        <div class="flex space-x-2">
+            {% if page_obj.has_previous %}
+                <a href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if region_filter %}&region={{ region_filter }}{% endif %}{% if era_filter %}&era={{ era_filter }}{% endif %}{% if species_filter %}&species={{ species_filter }}{% endif %}" class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">Previous</a>
+            {% endif %}
+            <span class="px-4 py-2 bg-green-600 text-white rounded">{{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if region_filter %}&region={{ region_filter }}{% endif %}{% if era_filter %}&era={{ era_filter }}{% endif %}{% if species_filter %}&species={{ species_filter }}{% endif %}" class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">Next</a>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

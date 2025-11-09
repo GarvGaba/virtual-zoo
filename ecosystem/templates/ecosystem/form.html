@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ action }} Ecosystem - Virtual Zoo{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto bg-white rounded-lg shadow-lg p-8">
+    <h2 class="text-3xl font-bold mb-6">{{ action }} Ecosystem</h2>
+    <form method="post" enctype="multipart/form-data" class="space-y-4">
+        {% csrf_token %}
+        <div>
+            <label for="{{ form.name.id_for_label }}" class="block text-gray-700 font-semibold mb-2">Name</label>
+            {{ form.name }}
+            {% if form.name.errors %}
+                <p class="text-red-500 text-sm">{{ form.name.errors }}</p>
+            {% endif %}
+        </div>
+        <div>
+            <label for="{{ form.description.id_for_label }}" class="block text-gray-700 font-semibold mb-2">Description</label>
+            {{ form.description }}
+            {% if form.description.errors %}
+                <p class="text-red-500 text-sm">{{ form.description.errors }}</p>
+            {% endif %}
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <label for="{{ form.location.id_for_label }}" class="block text-gray-700 font-semibold mb-2">Location</label>
+                {{ form.location }}
+                {% if form.location.errors %}
+                    <p class="text-red-500 text-sm">{{ form.location.errors }}</p>
+                {% endif %}
+            </div>
+            <div>
+                <label for="{{ form.climate.id_for_label }}" class="block text-gray-700 font-semibold mb-2">Climate</label>
+                {{ form.climate }}
+                {% if form.climate.errors %}
+                    <p class="text-red-500 text-sm">{{ form.climate.errors }}</p>
+                {% endif %}
+            </div>
+        </div>
+        <div>
+            <label for="{{ form.image.id_for_label }}" class="block text-gray-700 font-semibold mb-2">Image</label>
+            {{ form.image }}
+            {% if form.image.errors %}
+                <p class="text-red-500 text-sm">{{ form.image.errors }}</p>
+            {% endif %}
+        </div>
+        <div class="flex space-x-4">
+            <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700 font-semibold">Save</button>
+            <a href="{% if ecosystem %}{% url 'ecosystem:detail' ecosystem.pk %}{% else %}{% url 'ecosystem:list' %}{% endif %}" class="bg-gray-300 text-gray-700 px-6 py-2 rounded hover:bg-gray-400 font-semibold">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
+

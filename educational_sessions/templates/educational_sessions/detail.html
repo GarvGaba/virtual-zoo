@@ -1,0 +1,247 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ session.title }} - Virtual Zoo{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto">
+    <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+        <div class="h-96 bg-gradient-to-br from-purple-400 to-pink-500 flex items-center justify-center relative">
+            {% if session.image %}
+                <img src="{{ session.image.url }}" alt="{{ session.title }}" class="w-full h-full object-cover">
+            {% else %}
+                <span class="text-9xl">📚</span>
+            {% endif %}
+        </div>
+        <div class="p-8">
+            <div class="flex justify-between items-start mb-6">
+                <div>
+                    <div class="flex items-center space-x-3 mb-2">
+                        <h1 class="text-4xl font-bold">{{ session.title }}</h1>
+                        <span class="bg-purple-100 text-purple-800 px-3 py-1 rounded">{{ session.get_session_type_display }}</span>
+                    </div>
+                    <div class="text-gray-600 space-y-1">
+                        <p><span class="font-semibold">Teacher:</span> {{ session.teacher.get_full_name|default:session.teacher.username }}</p>
+                        <p><span class="font-semibold">Scheduled:</span> {{ session.scheduled_date|date:"F d, Y at H:i" }}</p>
+                        <p><span class="font-semibold">Duration:</span> {{ session.duration_minutes }} minutes</p>
+                        <p><span class="font-semibold">Capacity:</span> {{ enrollment_count }}/{{ session.max_students }} students</p>
+                        {% if session.ecosystem %}
+                            <p><span class="font-semibold">Ecosystem:</span> <a href="{% url 'ecosystem:detail' session.ecosystem.pk %}" class="text-green-600 hover:text-green-800">{{ session.ecosystem.name }}</a></p>
+                        {% endif %}
+                    </div>
+                </div>
+                {% if user.is_authenticated and user.is_admin_user or user.is_authenticated and user == session.teacher %}
+                    <div class="space-x-2">
+                        <a href="{% url 'educational_sessions:update' session.pk %}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Edit</a>
+                        <a href="{% url 'educational_sessions:delete' session.pk %}" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">Delete</a>
+                    </div>
+                {% endif %}
+            </div>
+            <div class="prose max-w-none mb-8">
+                <p class="text-gray-700 text-lg leading-relaxed">{{ session.description }}</p>
+            </div>
+
+            <!-- Video Player -->
+            {% if session.video_url %}
+            <div class="border-t pt-6 mb-6">
+                <h2 class="text-2xl font-bold mb-4">Video Recording</h2>
+                <div class="bg-gray-900 rounded-lg overflow-hidden" style="position: relative; padding-bottom: 56.25%; height: 0; min-height: 400px;">
+                    {% with youtube_id=session.video_url|extract_youtube_id vimeo_id=session.video_url|extract_vimeo_id %}
+                        {% if youtube_id %}
+                            <iframe id="video-player" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" 
+                                    src="https://www.youtube.com/embed/{{ youtube_id }}?rel=0&modestbranding=1" 
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                    allowfullscreen
+                                    frameborder="0"></iframe>
+                        {% elif vimeo_id %}
+                            <iframe id="video-player" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" 
+                                    src="https://player.vimeo.com/video/{{ vimeo_id }}?title=0&byline=0&portrait=0" 
+                                    allow="autoplay; fullscreen; picture-in-picture" 
+                                    allowfullscreen></iframe>
+                        {% else %}
+                            <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #1a1a1a;">
+                                <div class="text-center">
+                                    <p class="text-white mb-4">Video URL: {{ session.video_url }}</p>
+                                    <a href="{{ session.video_url }}" target="_blank" class="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 inline-block">
+                                        Watch Video (External Link)
+                                    </a>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endwith %}
+                </div>
+                {% if not session.video_url|extract_youtube_id and not session.video_url|extract_vimeo_id %}
+                <p class="text-sm text-gray-600 mt-2">Note: Video URL format not recognized. Please use YouTube or Vimeo URLs.</p>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            <!-- Lesson Content -->
+            {% if session.lesson_content %}
+            <div class="border-t pt-6 mb-6">
+                <h2 class="text-2xl font-bold mb-4">Lesson Content</h2>
+                <div class="prose max-w-none bg-gray-50 p-6 rounded-lg">
+                    {{ session.lesson_content|linebreaks }}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Downloadable Resources -->
+            {% if resources %}
+            <div class="border-t pt-6 mb-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-2xl font-bold">Downloadable Resources</h2>
+                    {% if user.is_authenticated and user.is_admin_user or user.is_authenticated and user == session.teacher %}
+                        <button onclick="document.getElementById('resource-form').classList.toggle('hidden')" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 text-sm">Add Resource</button>
+                    {% endif %}
+                </div>
+                
+                <!-- Add Resource Form (Hidden by default) -->
+                {% if user.is_authenticated and user.is_admin_user or user.is_authenticated and user == session.teacher %}
+                <div id="resource-form" class="hidden mb-4 bg-gray-50 p-4 rounded-lg">
+                    <form method="post" action="{% url 'educational_sessions:add_resource' session.pk %}" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="space-y-3">
+                            <input type="text" name="title" placeholder="Resource Title" required class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                            <input type="file" name="file" required class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                            <textarea name="description" placeholder="Description (optional)" rows="2" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></textarea>
+                            <button type="submit" class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">Upload</button>
+                        </div>
+                    </form>
+                </div>
+                {% endif %}
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {% for resource in resources %}
+                    <div class="bg-gray-50 rounded-lg p-4 flex items-center justify-between">
+                        <div>
+                            <h3 class="font-semibold">{{ resource.title }}</h3>
+                            {% if resource.description %}
+                                <p class="text-sm text-gray-600">{{ resource.description }}</p>
+                            {% endif %}
+                            <p class="text-xs text-gray-500 mt-1">Uploaded: {{ resource.uploaded_at|date:"M d, Y" }}</p>
+                        </div>
+                        <a href="{{ resource.file.url }}" download class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">Download</a>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Enrollment Section -->
+            {% if user.is_authenticated %}
+                {% if user.is_student_user %}
+                    <div class="border-t pt-6 mb-6">
+                        {% if is_enrolled %}
+                            <p class="mb-4 text-green-600 font-semibold">✓ You are enrolled in this session</p>
+                            <a href="{% url 'educational_sessions:unenroll' session.pk %}" class="bg-red-600 text-white px-6 py-2 rounded hover:bg-red-700">Unenroll</a>
+                        {% else %}
+                            {% if enrollment_count >= session.max_students %}
+                                <p class="mb-4 text-red-600 font-semibold">This session is full</p>
+                            {% else %}
+                                <a href="{% url 'educational_sessions:enroll' session.pk %}" class="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700">Enroll in Session</a>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                {% endif %}
+            {% else %}
+                <div class="border-t pt-6 mb-6">
+                    <p class="mb-4">Please <a href="{% url 'accounts:login' %}" class="text-green-600 hover:text-green-800">login</a> to enroll in this session.</p>
+                </div>
+            {% endif %}
+
+            <!-- Quiz Section -->
+            {% if quizzes %}
+            <div class="border-t pt-6 mb-6">
+                <h2 class="text-2xl font-bold mb-4">Quiz Questions</h2>
+                <div class="space-y-4">
+                    {% for quiz in quizzes %}
+                    <div class="bg-gray-50 rounded-lg p-6">
+                        <h3 class="font-semibold mb-3">{{ quiz.question }}</h3>
+                        <div class="space-y-2">
+                            <div class="flex items-center">
+                                <input type="radio" name="quiz_{{ quiz.id }}" value="A" class="mr-2">
+                                <label>A. {{ quiz.option_a }}</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="radio" name="quiz_{{ quiz.id }}" value="B" class="mr-2">
+                                <label>B. {{ quiz.option_b }}</label>
+                            </div>
+                            {% if quiz.option_c %}
+                            <div class="flex items-center">
+                                <input type="radio" name="quiz_{{ quiz.id }}" value="C" class="mr-2">
+                                <label>C. {{ quiz.option_c }}</label>
+                            </div>
+                            {% endif %}
+                            {% if quiz.option_d %}
+                            <div class="flex items-center">
+                                <input type="radio" name="quiz_{{ quiz.id }}" value="D" class="mr-2">
+                                <label>D. {{ quiz.option_d }}</label>
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% if quiz.explanation %}
+                            <p class="mt-3 text-sm text-gray-600"><strong>Explanation:</strong> {{ quiz.explanation }}</p>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Comments Section -->
+            <div class="border-t pt-6 mb-6">
+                <h2 class="text-2xl font-bold mb-4">Comments</h2>
+                
+                <!-- Add Comment Form -->
+                {% if user.is_authenticated %}
+                <form method="post" action="{% url 'educational_sessions:add_comment' session.pk %}" class="mb-6">
+                    {% csrf_token %}
+                    {{ comment_form.content }}
+                    <button type="submit" class="mt-2 bg-purple-600 text-white px-6 py-2 rounded hover:bg-purple-700">Post Comment</button>
+                </form>
+                {% else %}
+                <p class="mb-4 text-gray-600">Please <a href="{% url 'accounts:login' %}" class="text-purple-600 hover:text-purple-800">login</a> to comment.</p>
+                {% endif %}
+                
+                <!-- Comments List -->
+                <div class="space-y-4">
+                    {% for comment in comments %}
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <div class="flex justify-between items-start mb-2">
+                            <div>
+                                <p class="font-semibold">{{ comment.user.get_full_name|default:comment.user.username }}</p>
+                                <p class="text-sm text-gray-500">{{ comment.created_at|date:"F d, Y H:i" }}</p>
+                            </div>
+                        </div>
+                        <p class="text-gray-700">{{ comment.content|linebreaks }}</p>
+                    </div>
+                    {% empty %}
+                    <p class="text-gray-500">No comments yet. Be the first to comment!</p>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Enrolled Students (Teacher/Admin only) -->
+            {% if user.is_authenticated and user.is_admin_user or user.is_authenticated and user == session.teacher %}
+                <div class="border-t pt-6">
+                    <h2 class="text-2xl font-bold mb-4">Enrolled Students ({{ enrollment_count }})</h2>
+                    {% if enrollments %}
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {% for enrollment in enrollments %}
+                            <div class="bg-gray-50 rounded-lg p-4">
+                                <p class="font-semibold">{{ enrollment.student.get_full_name|default:enrollment.student.username }}</p>
+                                <p class="text-sm text-gray-600">Enrolled: {{ enrollment.enrolled_at|date:"M d, Y" }}</p>
+                                <p class="text-sm text-gray-600">Attended: {% if enrollment.attended %}Yes{% else %}No{% endif %}</p>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-gray-500">No students enrolled yet.</p>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}
